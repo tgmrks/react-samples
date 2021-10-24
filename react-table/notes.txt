@@ -1,0 +1,16 @@
+# react-table package
+$ yarn add react-table
+
+# mock data
+mockaroo.com
+
+# HTML symbols code
+arrow down: ⯆   ↓   🔽   &#x2191;   &#8593;
+arrow up:   ⯅   ↑   🔼   &#x2191;   &#8593;
+
+# react-table data sorting requires a proper date format in order
+to be able to proper deal with the data, so pre formatted date as such dd/mm/yyyy
+will not be sorted as date, but as a simple string.
+
+# date formatting:
+$ yarn add date-fns
