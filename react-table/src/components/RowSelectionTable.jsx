@@ -1,27 +1,38 @@
-import { useMemo, useEffect } from "react";
-import { useTable, useGlobalFilter } from "react-table";
-import { GlobalFilter } from "./GlobalFilter";
-import { MyDefaultFilterComponent } from './MyDefaultFilterComponent'
+import { useMemo } from "react";
+import { useTable, useRowSelect } from "react-table";
 import MOCK_DATA from '../utils/MOCK_DATA.json';
 import { COLUMNS, GROUPED_COLUMNS } from './columns.js';
 import '../style/table.css';
+import { Checkbox } from './Checkbox'
 
-export function FilteringTable() {
+export function RowSelectionTable() {
 
     //useMemo avoid rerendering mock_data
     const columns = useMemo(() => COLUMNS, []);
     const data = useMemo(() => MOCK_DATA, []);
 
-    const defaultColumn = useMemo(
-        () => ({ Filter: MyDefaultFilterComponent }),[]
-      )
-
     //set table instance
     const tableInstance = useTable({
         columns: columns,
         data: data,
-        defaultColumn
-    }, useGlobalFilter);
+    }, useRowSelect,
+        (hooks) => {
+            hooks.visibleColumns.push((columns) => {
+                return [
+                    {
+                        id: 'selection',
+                        Header: ({ getToggleAllRowsSelectedProps }) => (
+                            <Checkbox {...getToggleAllRowsSelectedProps()} />
+                        ),
+                        Cell: ({ row }) => (
+                            <Checkbox {...row.getToggleRowSelectedProps()} />
+                        )
+                    },
+                    ...columns
+                ]
+            })
+        }
+    );
 
     //deconstruct functions and arrays provided by react-table
     const {
@@ -31,17 +42,13 @@ export function FilteringTable() {
         footerGroups,
         rows,
         prepareRow,
-        state,
-        setGlobalFilter,
+        selectedFlatRows,
     } = tableInstance;
 
-    const { globalFilter } = state
+    const firstPageRows = rows.slice(0, 10)
 
     return (
         <>
-            {console.log(globalFilter)}
-            <GlobalFilter globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
-
             <table {...getTableProps()}>
                 <thead>
                     {
@@ -51,9 +58,6 @@ export function FilteringTable() {
                                     headerGroup.headers.map((column) => (
                                         <th {...column.getHeaderProps()}>
                                             {column.render('Header')}
-                                            <div>
-                                                {column.canFilter ? column.render('Filter') : null}
-                                            </div>
                                         </th>
                                     ))}
                             </tr>
@@ -61,7 +65,8 @@ export function FilteringTable() {
                 </thead>
                 <tbody {...getTableBodyProps()}>
                     {
-                        rows.map((row) => {
+                        //rows.map((row) => {
+                        firstPageRows.map((row) => {
                             prepareRow(row)
                             return (
                                 <tr {...row.getRowProps()}>
@@ -92,6 +97,17 @@ export function FilteringTable() {
                     }
                 </tfoot>
             </table>
+            <pre>
+                <code>
+                    {JSON.stringify(
+                        {
+                            selectedFlatRows: selectedFlatRows.map(row => row.original)
+                        },
+                        null,
+                        2
+                    )}
+                </code>
+            </pre>
         </>
     )
 }

@@ -14,3 +14,12 @@ will not be sorted as date, but as a simple string.
 
 # date formatting:
 $ yarn add date-fns
+
+# react table sticky 
+https://www.npmjs.com/package/react-table-sticky
+$ yarn add react-table-sticky
+
+# styled-components for the sticky column
+$ yarn add styled-components
+
+# on column definition (columns.js) define what columns are sticky

@@ -14,7 +14,7 @@ export function PaginationTable() {
     const tableInstance = useTable({
         columns: columns,
         data: data,
-        initialState: { pageIndex: 1 },
+        initialState: { pageIndex: 0 },
     }, usePagination);
 
     //deconstruct functions and arrays provided by react-table
@@ -107,11 +107,13 @@ export function PaginationTable() {
             </div>
             <div>
                 {
-                    (pageOptions.length)
-                    [1,2,3,4,5,'...'].map((item) => (
-                        <button>{item}</button>
+                    pageOptions.map((item) => (
+                        item < 5 
+                        ? <button onClick={() => gotoPage(Number(item))}>{item+1}</button> 
+                        : ''
                     ))
                 }
+                <button disabled={true}>...</button>
             </div>
         </>
     )
